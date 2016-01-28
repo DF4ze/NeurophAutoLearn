@@ -20,7 +20,7 @@ public class DataSetFitnessSorter implements Runnable {
 			
 				while( dsm.getWaitingLine().size() != 0 ){
 					EvalDataSetRow evalItem = dsm.popWaitingItem();
-					if( isFitnessInAcceptedRange( evalItem.getFitness() ) )
+					if( dsm.isFitnessInAcceptedRange( evalItem.getFitness() ) )
 						dsm.acceptRow( evalItem );
 					else
 						dsm.addReevalItem(evalItem);
@@ -31,14 +31,6 @@ public class DataSetFitnessSorter implements Runnable {
 
 	}
 	
-	protected boolean isFitnessInAcceptedRange( double fitness ){
-		double delta = (ManagedDataSet.getAcceptedError() * ManagedDataSet.getMaxFitness())/100;
-		
-		boolean accepted = false;
-		if( fitness >= ( ManagedDataSet.getMaxFitness() - delta ) )
-			accepted = true;
-		
-		return accepted;
-	}
+	
 
 }

@@ -7,7 +7,7 @@ import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 import dataManager.EvalDataSetRow;
 import dataManager.ManagedDataSet;
 import networkManager.NetworkTeacher;
-import networkManager.XorEvaluation;
+import networkManager.evaluate.XorEvaluation;
 
 public class TestNetworkTeacher {
 
@@ -16,6 +16,12 @@ public class TestNetworkTeacher {
 	}
 
 	public static void main(String[] args) {
+		System.out.println("Evaluation de l'auto apprentissage sur une base XOR\n"+
+					"2 inputs 1 output\n\n"+
+					"- 'q' pour quitter\n"+
+					"- 'c' pour compter le DataSet\n"+
+					"- 's' pour lister le DataSet\n");
+		
 		XorEvaluation evaluateFunction = new XorEvaluation();
 		ManagedDataSet.setParameters(2, 1, 10, 10);
 		ManagedDataSet mds = ManagedDataSet.getInstance();
@@ -28,6 +34,15 @@ public class TestNetworkTeacher {
 			System.out.println("\n\n1er input?");
 			key1 = sc.next();
 			if( !key1.equals("q") )	{
+				switch( key1 ){
+				case "c":
+					System.out.println("Count : "+mds.size());
+					continue;
+				case "s":
+					System.out.println( "list : \n"+mds.toString() );
+					continue;
+				}
+				
 				System.out.println("2eme input?");
 				String key2 = sc.next();
 				if( !key2.equals("q") )	{

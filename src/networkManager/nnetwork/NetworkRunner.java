@@ -1,4 +1,4 @@
-package networkManager;
+package networkManager.nnetwork;
 
 import java.util.ArrayList;
 
@@ -20,6 +20,9 @@ public class NetworkRunner {
 	private ArrayList<EvalDataSetRow> last2 = new ArrayList<>();
 	
 	/**
+	 * Get an instance of NetworkRunner giving it the input, ouput size and a ManagedDataSet
+	 * This instance will generate the neuronnal network according to inputs  
+	 * 
 	 * @param inputSize
 	 * @param outputSize
 	 */
@@ -46,9 +49,15 @@ public class NetworkRunner {
 		
 	}
 
-	
+	/**
+	 * Will run the network with the given inputs in row
+	 * then set the ouput in this same row and return it
+	 * 
+	 * @param row EvalDataSetRow that contains inputs
+	 * @return the same EvalDataSetRow with outputs sets
+	 */
 	public EvalDataSetRow calculate( EvalDataSetRow row ){
-		try{
+		/*try{
 			double[] inputs1 = last2.get(0).getInput();
 			double[] outputs1 = last2.get(0).getDesiredOutput();
 			double[] inputs2 = last2.get(1).getInput();
@@ -62,16 +71,16 @@ public class NetworkRunner {
 			}
 		}catch(Exception e){
 			
-		}
+		}*/
 		
-		learn();
+		//learn();
 		
 		neuralNet.setInput( row.getInput() );
         neuralNet.calculate();
         
         row.setDesiredOutput( neuralNet.getOutput() );
         
-        try{
+       /* try{
         	if( last2.size() == 0 )
             	last2.add(row);
             else if( last2.size() == 1 ){
@@ -85,7 +94,7 @@ public class NetworkRunner {
         	
         }catch( Exception e ){
         }
-        
+        */
         
         return row;
 	}

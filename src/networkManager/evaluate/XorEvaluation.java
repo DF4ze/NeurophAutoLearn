@@ -1,7 +1,7 @@
 /**
  * 
  */
-package networkManager;
+package networkManager.evaluate;
 
 import dataManager.EvalDataSetRow;
 import dataManager.ManagedDataSet;

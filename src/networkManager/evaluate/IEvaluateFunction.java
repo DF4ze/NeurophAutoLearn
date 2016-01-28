@@ -1,7 +1,7 @@
 /**
  * 
  */
-package networkManager;
+package networkManager.evaluate;
 
 import dataManager.EvalDataSetRow;
 
@@ -12,4 +12,5 @@ import dataManager.EvalDataSetRow;
 public interface IEvaluateFunction {
 
 	public double evaluate( EvalDataSetRow evalItem );
+	public String toString();
 }

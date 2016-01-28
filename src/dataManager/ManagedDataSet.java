@@ -9,6 +9,8 @@ import org.neuroph.core.data.DataSetRow;
 import org.neuroph.core.exceptions.NeurophException;
 import org.neuroph.core.exceptions.VectorSizeMismatchException;
 
+import debug.debug;
+
 /**
  * This class recept Fited Supervised inputs and make the choice to put them in 
  * a "valid" train set or sent it to reevaluate due to fitness
@@ -57,6 +59,10 @@ public class ManagedDataSet extends FitDataSet {
 	 * Thread that manage the sort of incoming rows
 	 */
 	private static Thread tSorter;
+	/**
+	 * For the hasChanged() function, remember the last count of entries
+	 */
+	private int countEntries = 0;
 	
 	
 	/**
@@ -178,6 +184,7 @@ public class ManagedDataSet extends FitDataSet {
 	 */
 	public EvalDataSetRow popWaitingItem(){
 		EvalDataSetRow item = null;
+		// TODO : remove this comments...?
 		//synchronized (this) {
 			item = waitingLine.pop();
 			
@@ -204,11 +211,52 @@ public class ManagedDataSet extends FitDataSet {
 	 */
 	protected void acceptRow( EvalDataSetRow edsr ){
 		super.addRow(edsr.toFitDataSetRow());
+		
+		if( debug.isDebug() ){
+			String txt = " inputs : ";
+			for( int i=0; i < edsr.getInput().length; i++ )
+				txt += edsr.getInput()[i]+", ";
+			
+			txt += "ouputs : ";
+			for( int i=0; i < edsr.getDesiredOutput().length; i++ )
+				txt += edsr.getDesiredOutput()[i]+", ";
+			
+			txt += " Fit : "+edsr.getFitness();
+			System.out.println("Accepted row : "+txt);
+		}
 	}
 	
 	
+	/**
+	 * return true if accepted data list has changed
+	 * 
+	 * @return true if changed
+	 */
+	public boolean hasChanged(){
+		boolean hasChanged = false;
+		if( getRows().size() != countEntries ){
+			countEntries = getRows().size();
+			hasChanged = true;
+		}
+		return hasChanged;
+	}
 	
-
+	/**
+	 * return true if given fitness is in range of accepted values
+	 * 
+	 * @param fitness fitness to evaluate
+	 * @return true if given fitness is in range of accepted values
+	 */
+	public boolean isFitnessInAcceptedRange( double fitness ){
+		double delta = (ManagedDataSet.getAcceptedError() * ManagedDataSet.getMaxFitness())/100;
+		
+		boolean accepted = false;
+		if( fitness >= ( ManagedDataSet.getMaxFitness() - delta ) )
+			accepted = true;
+		
+		return accepted;
+	}
+	
 	/* (non-Javadoc)
 	 * @see dataManager.FitDataSet#addRow(dataManager.FitDataSetRow)
 	 */

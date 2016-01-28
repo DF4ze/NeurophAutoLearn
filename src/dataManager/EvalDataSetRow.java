@@ -122,5 +122,6 @@ public class EvalDataSetRow extends FitDataSetRow {
 	 */
 	protected void setPrevEval(FitDataSet prevEval) {
 		this.prevEval = prevEval;
+		this.prevEval.setFited(true);
 	}
 }

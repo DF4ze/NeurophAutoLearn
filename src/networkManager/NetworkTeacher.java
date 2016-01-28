@@ -1,5 +1,8 @@
 package networkManager;
 
+import networkManager.evaluate.IEvaluateFunction;
+import networkManager.nnetwork.NetworkRunner;
+
 import org.neuroph.core.data.DataSetRow;
 import org.neuroph.core.exceptions.NeurophException;
 
@@ -7,10 +10,16 @@ import dataManager.EvalDataSetRow;
 import dataManager.ManagedDataSet;
 
 public class NetworkTeacher {
+	
+	public static int BEGINNING = 0;
+	public static int RUNNING = 1;
+	
 
 	private ManagedDataSet mds;
 	private IEvaluateFunction evaluateFunction;
 	private NetworkRunner networkRunner;
+	private Thread tDeleguate;
+	
 	/**
 	 * Maximum of fitness this network can have
 	 */
@@ -49,8 +58,12 @@ public class NetworkTeacher {
 	}
 	
 	/**
-	 * @param mds
-	 * @param evaluateFunction
+	 * Get a NetworkTeacher based on the ManagedDataSet and the EvaluateFunction given in parameters
+	 * ManagedDataSet wil retrieve all admited rows
+	 * EvaluateFunction will set the fitness of outputs
+	 * 
+	 * @param mds the ManagedDataSet that contains admited rows (could be empty)
+	 * @param evaluateFunction from IEvaluateFunction, implement the evaluate() function
 	 */
 	public NetworkTeacher(ManagedDataSet mds, IEvaluateFunction evaluateFunction) throws NeurophException{
 		setManagedDataSet(mds);
@@ -69,8 +82,8 @@ public class NetworkTeacher {
 	 * If evaluation is success, row is keeped for next try
 	 * else it will be send to "re-evaluate queue"
 	 * 
-	 * @param evalRow
-	 * @return
+	 * @param evalRow a row that contains inputs vectors (param IN/OUT : ouputs and fitness will be set) 
+	 * @return a simple DataSetRow that contains inputs and outputs vector
 	 * @throws NeurophException
 	 */
 	public DataSetRow addInputs( EvalDataSetRow evalRow ) throws NeurophException{
@@ -97,7 +110,11 @@ public class NetworkTeacher {
 			setManagedDataSet( ManagedDataSet.getInstance() );
 		}
 		
-		// retrieve outputs
+		// learn network if datas changed
+		if( getManagedDataSet().hasChanged() )
+			getNetworkRunner().learn();
+		
+		// and get outputs
 		evalRow = getNetworkRunner().calculate(evalRow);
 		
 		// retrieve fitness
@@ -106,6 +123,12 @@ public class NetworkTeacher {
 		
 		// add it to the ManagerDataSet
 		mds.addRow(evalRow);
+		
+		
+		if( tDeleguate == null ){
+			tDeleguate = new Thread(new ReevaluateTeacherDeleguate(mds, getEvaluateFunction()));
+			tDeleguate.start();
+		}
 		
 		return evalRow.toDataSetRow();
 	}
