@@ -42,7 +42,10 @@ public class ReevaluateTeacherDeleguate implements Runnable {
 					
 					evalItem.setDesiredOutput(outputs);
 					
-					double fitness = getEvalFunction().evaluate(evalItem);
+					Double fitness = getEvalFunction().evaluate(evalItem);
+					
+					if( fitness == null )
+						continue;
 					
 					evalItem.setFitness(fitness);
 					

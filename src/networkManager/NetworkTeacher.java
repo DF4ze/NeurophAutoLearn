@@ -68,8 +68,6 @@ public class NetworkTeacher {
 	public NetworkTeacher(ManagedDataSet mds, IEvaluateFunction evaluateFunction) throws NeurophException{
 		setManagedDataSet(mds);
 		setEvaluateFunction(evaluateFunction);
-		
-		
 	}
 	
 	
@@ -118,17 +116,21 @@ public class NetworkTeacher {
 		evalRow = getNetworkRunner().calculate(evalRow);
 		
 		// retrieve fitness
-		double fitness = evaluateFunction.evaluate(evalRow);
+		Double fitness = evaluateFunction.evaluate(evalRow);
+		if( fitness == null )
+			return null;
+		
 		evalRow.setFitness(fitness);
 		
-		// add it to the ManagerDataSet
-		mds.addRow(evalRow);
-		
-		
+		// starting Reevaluate treatment if not launched
 		if( tDeleguate == null ){
 			tDeleguate = new Thread(new ReevaluateTeacherDeleguate(mds, getEvaluateFunction()));
 			tDeleguate.start();
 		}
+		
+		
+		// add it to the ManagerDataSet
+		mds.addRow(evalRow);
 		
 		return evalRow.toDataSetRow();
 	}

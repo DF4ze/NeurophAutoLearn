@@ -1,11 +1,11 @@
 package networkManager.nnetwork;
 
-import java.util.ArrayList;
-
+import org.neuroph.core.Layer;
 import org.neuroph.core.exceptions.NeurophException;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.nnet.learning.BackPropagation;
-import org.neuroph.util.random.WeightsRandomizer;
+import org.neuroph.util.LayerFactory;
+import org.neuroph.util.TransferFunctionType;
 
 import dataManager.EvalDataSetRow;
 import dataManager.ManagedDataSet;
@@ -17,7 +17,7 @@ public class NetworkRunner {
 	private ManagedDataSet mds;
 	private MultiLayerPerceptron neuralNet;
 	private BackPropagation learningRule;
-	private ArrayList<EvalDataSetRow> last2 = new ArrayList<>();
+	//private ArrayList<EvalDataSetRow> last2 = new ArrayList<>();
 	
 	/**
 	 * Get an instance of NetworkRunner giving it the input, ouput size and a ManagedDataSet
@@ -49,6 +49,7 @@ public class NetworkRunner {
 		
 	}
 
+
 	/**
 	 * Will run the network with the given inputs in row
 	 * then set the ouput in this same row and return it
@@ -77,6 +78,9 @@ public class NetworkRunner {
 		
 		neuralNet.setInput( row.getInput() );
         neuralNet.calculate();
+        //Layer layer = LayerFactory.createLayer(5, TransferFunctionType.SIGMOID);
+        //neuralNet.addLayer(layer);
+        
         
         row.setDesiredOutput( neuralNet.getOutput() );
         
@@ -152,5 +156,18 @@ public class NetworkRunner {
 		this.outputSize = outputSize;
 	}
 
+	/**
+	 * @return the neuralNet
+	 */
+	public MultiLayerPerceptron getNeuralNet() {
+		return neuralNet;
+	}
+
+	/**
+	 * @param neuralNet the neuralNet to set
+	 */
+	public void setNeuralNet(MultiLayerPerceptron neuralNet) {
+		this.neuralNet = neuralNet;
+	}
 
 }

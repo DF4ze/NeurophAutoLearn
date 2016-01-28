@@ -82,10 +82,11 @@ public class ManagedDataSet extends FitDataSet {
 				acceptedError == null)
 			throw new NeurophException("One or more parameters aren't set");
 		
-		if( launchSorter() )
+	/*	if( launchSorter() )
 			System.out.println( "Thread launch asked" );
 		else
 			System.out.println( "Thread launch not asked" );
+	*/
 	}	
 
 	/**
@@ -213,16 +214,7 @@ public class ManagedDataSet extends FitDataSet {
 		super.addRow(edsr.toFitDataSetRow());
 		
 		if( debug.isDebug() ){
-			String txt = " inputs : ";
-			for( int i=0; i < edsr.getInput().length; i++ )
-				txt += edsr.getInput()[i]+", ";
-			
-			txt += "ouputs : ";
-			for( int i=0; i < edsr.getDesiredOutput().length; i++ )
-				txt += edsr.getDesiredOutput()[i]+", ";
-			
-			txt += " Fit : "+edsr.getFitness();
-			System.out.println("Accepted row : "+txt);
+			//System.out.println("Accepted row : "+edsr);
 		}
 	}
 	

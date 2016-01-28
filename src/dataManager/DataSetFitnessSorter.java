@@ -10,7 +10,7 @@ public class DataSetFitnessSorter implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println("Thread effectly running");
+		//System.out.println("Thread effectly running");
 		synchronized (dsm.getWaitingLine()) {
 			while( true ){
 			

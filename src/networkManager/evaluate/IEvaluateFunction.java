@@ -11,6 +11,12 @@ import dataManager.EvalDataSetRow;
  */
 public interface IEvaluateFunction {
 
-	public double evaluate( EvalDataSetRow evalItem );
+	/**
+	 * Function that receive a simple row and must look at inputs and outputs and say if it's correct.
+	 * @param evalItem
+	 * @return
+	 */
+	public Double evaluate( EvalDataSetRow evalItem );
 	public String toString();
+	
 }
