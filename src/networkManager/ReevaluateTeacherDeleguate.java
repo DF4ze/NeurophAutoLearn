@@ -2,7 +2,6 @@ package networkManager;
 
 import networkManager.evaluate.IEvaluateFunction;
 import dataManager.EvalDataSetRow;
-import dataManager.FitDataSet;
 import dataManager.ManagedDataSet;
 
 public class ReevaluateTeacherDeleguate implements Runnable {
@@ -23,13 +22,14 @@ public class ReevaluateTeacherDeleguate implements Runnable {
 
 	@Override
 	public void run() {
-		
+		System.out.println("Rééval Thread started");
 			while( true ){
 				synchronized (mds.getReevalItems()) {
 					try {
-						mds.getReevalItems().wait(100000l);
+						mds.getReevalItems().wait(1000l);
 					} catch (InterruptedException e) {}
 				}
+				//System.out.println("Rééval Thread wake up");
 				while( mds.getReevalItems().size() != 0 ){
 					//System.out.println("Rééval...");
 					EvalDataSetRow evalItem = mds.popReevalItem();

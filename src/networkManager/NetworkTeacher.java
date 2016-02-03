@@ -4,12 +4,15 @@ import networkManager.evaluate.IEvaluateFunction;
 import networkManager.nnetwork.NetworkRunner;
 
 import org.neuroph.core.data.DataSetRow;
+import org.neuroph.core.events.LearningEvent;
+import org.neuroph.core.events.LearningEventListener;
 import org.neuroph.core.exceptions.NeurophException;
+import org.neuroph.nnet.learning.BackPropagation;
 
 import dataManager.EvalDataSetRow;
 import dataManager.ManagedDataSet;
 
-public class NetworkTeacher {
+public class NetworkTeacher implements LearningEventListener{
 	
 	public static int BEGINNING = 0;
 	public static int RUNNING = 1;
@@ -109,8 +112,15 @@ public class NetworkTeacher {
 		}
 		
 		// learn network if datas changed
-		if( getManagedDataSet().hasChanged() )
+		if( getManagedDataSet().hasChanged() ){
+//			BackPropagation learningRule = getNetworkRunner().getNeuralNet().getLearningRule();
+//			MultiLayerPerceptron neuralNet = new MultilayerPerceptronOptimazer<>()
+//	                .withLearningRule(learningRule)
+//	                .createOptimalModel(getManagedDataSet());
+//
+//	        getNetworkRunner().setNeuralNet(neuralNet);
 			getNetworkRunner().learn();
+		}
 		
 		// and get outputs
 		evalRow = getNetworkRunner().calculate(evalRow);
@@ -137,8 +147,6 @@ public class NetworkTeacher {
 	
 	
 	
-	
-	
 
 	/**
 	 * @return the ManagedDataSet
@@ -154,9 +162,9 @@ public class NetworkTeacher {
 		this.mds = mds;
 		
 		if( ManagedDataSet.getMaxFitness() != null &&
-			ManagedDataSet.getInputNb() != null &&
-			ManagedDataSet.getOutputNb() != null &&
-			ManagedDataSet.getAcceptedError() != null ){
+				ManagedDataSet.getInputNb() != null &&
+				ManagedDataSet.getOutputNb() != null &&
+				ManagedDataSet.getAcceptedError() != null ){
 			
 			setMaxFitness(ManagedDataSet.getMaxFitness());
 			setInputSize(ManagedDataSet.getInputNb());
@@ -164,10 +172,23 @@ public class NetworkTeacher {
 			setAcceptedError(ManagedDataSet.getAcceptedError());
 			
 			setNetworkRunner(new NetworkRunner(getInputSize(), getOutputSize(), getManagedDataSet()));
+			BackPropagation bp = getNetworkRunner().getNeuralNet().getLearningRule();
+			bp.addListener(this);
 		}else
 			throw new NeurophException("ManagedDataSet not correctly initialized!");
 
 	}
+	
+	
+	@Override
+	public void handleLearningEvent(LearningEvent event) {
+		BackPropagation bp = (BackPropagation)event.getSource();
+        if (event.getEventType() == LearningEvent.Type.LEARNING_STOPPED)
+            System.out.println(bp.getCurrentIteration() + ". iteration : "+ bp.getTotalNetworkError());
+        
+		//LearningEvent.Type.EPOCH_ENDED
+	}
+	
 
 	/**
 	 * @return the evaluateFunction
@@ -252,6 +273,8 @@ public class NetworkTeacher {
 	public void setNetworkRunner(NetworkRunner networkRunner) {
 		this.networkRunner = networkRunner;
 	}
+
+
 	
 	
 

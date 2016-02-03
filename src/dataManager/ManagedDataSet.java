@@ -3,8 +3,11 @@
  */
 package dataManager;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
+import org.neuroph.core.data.DataSet;
 import org.neuroph.core.data.DataSetRow;
 import org.neuroph.core.exceptions.NeurophException;
 import org.neuroph.core.exceptions.VectorSizeMismatchException;
@@ -82,6 +85,8 @@ public class ManagedDataSet extends FitDataSet {
 				acceptedError == null)
 			throw new NeurophException("One or more parameters aren't set");
 		
+		launchSorter();
+		
 	/*	if( launchSorter() )
 			System.out.println( "Thread launch asked" );
 		else
@@ -125,7 +130,7 @@ public class ManagedDataSet extends FitDataSet {
 				DataSetFitnessSorter dsfs = new DataSetFitnessSorter( this );
 				
 				tSorter = new Thread(dsfs);
-				tSorter.setDaemon(true);
+				//tSorter.setDaemon(true);
 				
 				tSorter.start();
 				
@@ -211,13 +216,26 @@ public class ManagedDataSet extends FitDataSet {
 	 * @param edsr
 	 */
 	protected void acceptRow( EvalDataSetRow edsr ){
-		super.addRow(edsr.toFitDataSetRow());
+		if( !contains( edsr ) )
+			super.addRow(edsr.toFitDataSetRow());
 		
 		if( debug.isDebug() ){
 			//System.out.println("Accepted row : "+edsr);
 		}
 	}
 	
+	/**
+	 * Returns true if this list contains the specified element. More formally, 
+	 * returns true if and only if this list contains at least one element e such that (o==null ? e==null : o.equals(e)).
+	 * 
+	 * @param edsr EvalDataSetRow to evaluate
+	 * @return true if inputs finded
+	 */
+	public boolean contains( EvalDataSetRow edsr ){
+		return getRows().contains(edsr);
+	}
+	
+
 	
 	/**
 	 * return true if accepted data list has changed
@@ -379,5 +397,27 @@ public class ManagedDataSet extends FitDataSet {
 	protected void setWaitingLine(LinkedList<EvalDataSetRow> waitingLine) {
 		ManagedDataSet.waitingLine = waitingLine;
 	}
+	
+	public void setRows( List<FitDataSetRow> rows ){
+		clear();
+		
+		for( FitDataSetRow row : rows ){
+			addRow(row);
+		}
+	}
+	public void setRows( ManagedDataSet mds ){
+		setRows( mds.getFitRows() );
+	}
 
+	public List<FitDataSetRow> getFitRows(){
+		List<FitDataSetRow> rows = new ArrayList<FitDataSetRow>();
+		for( DataSetRow row : getRows()){
+			rows.add( (FitDataSetRow)row );
+		}
+		return rows;
+	}
+	
+	public void loadFromFile( String fileName ){
+		setRows( (ManagedDataSet)DataSet.load(fileName));
+	}
 }

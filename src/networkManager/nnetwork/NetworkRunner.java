@@ -1,11 +1,8 @@
 package networkManager.nnetwork;
 
-import org.neuroph.core.Layer;
 import org.neuroph.core.exceptions.NeurophException;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.nnet.learning.BackPropagation;
-import org.neuroph.util.LayerFactory;
-import org.neuroph.util.TransferFunctionType;
 
 import dataManager.EvalDataSetRow;
 import dataManager.ManagedDataSet;

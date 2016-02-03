@@ -219,4 +219,37 @@ public class FitDataSetRow extends DataSetRow{
 		this.fitness = d;
 	}
 	
+	
+	@Override
+	public boolean equals(Object v) {
+        boolean retVal = true;
+
+        if (v instanceof DataSetRow){
+        	DataSetRow ptr = (DataSetRow) v;
+        	double[] inputsA = getInput();
+        	double[] inputsB = ptr.getInput();
+        	
+        	if( inputsA.length != inputsB.length )
+        		return false;
+        	
+        	for( int i=0; i<inputsA.length; i++ )
+        		if( inputsA[i] != inputsB[i] ){
+        			retVal = false;
+        			break;
+        		}
+        }
+        return retVal;
+	}
+
+	@Override
+	public int hashCode() {
+	    int hash = 7;
+	    
+	    double som = 0;
+	    for( int i=0; i<getInput().length; i++ )
+	    	som += getInput()[i];
+	    
+	    hash = 17 * hash + (int)(hash*som);
+	    return hash;
+	}	
 }

@@ -24,6 +24,7 @@ public class CorridorDriverEvaluation implements IEvaluateFunction {
 	 */
 	@Override
 	public Double evaluate(EvalDataSetRow evalItem) {
+		//System.out.println( "evaluation" );
 		double[] inputs = evalItem.getInput();
 		double[] outputs = evalItem.getDesiredOutput();
 

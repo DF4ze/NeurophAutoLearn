@@ -15,7 +15,7 @@ public class DataSetFitnessSorter implements Runnable {
 			while( true ){
 			
 				try {
-					dsm.getWaitingLine().wait(100000l);
+					dsm.getWaitingLine().wait(1000l);
 				} catch (InterruptedException e) {}
 			
 				while( dsm.getWaitingLine().size() != 0 ){

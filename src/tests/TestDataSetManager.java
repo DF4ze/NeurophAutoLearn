@@ -2,9 +2,9 @@ package tests;
 
 import org.neuroph.core.data.DataSet;
 
-import dataManager.ManagedDataSet;
 import dataManager.FitDataSet;
 import dataManager.FitDataSetRow;
+import dataManager.ManagedDataSet;
 
 public class TestDataSetManager {
 

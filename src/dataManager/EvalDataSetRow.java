@@ -71,6 +71,7 @@ public class EvalDataSetRow extends FitDataSetRow {
 		setFited(true);
 		setPrevEval(new FitDataSet( getInput().length, getDesiredOutput().length ));
 	}
+	
 
 	/**
 	 * Set training element Fitness and store olds values
