@@ -12,11 +12,12 @@ import dataManager.ManagedDataSet;
  */
 public class XorEvaluation implements IEvaluateFunction {
 
+	ManagedDataSet mds;
 	/**
 	 * 
 	 */
-	public XorEvaluation() {
-		// TODO Auto-generated constructor stub
+	public XorEvaluation(ManagedDataSet mds) {
+		this.mds = mds;
 	}
 
 	/* (non-Javadoc)
@@ -41,7 +42,7 @@ public class XorEvaluation implements IEvaluateFunction {
 			}else 
 				desiredOutput = 0;
 			
-			fitness = ManagedDataSet.getMaxFitness() - (Math.abs((desiredOutput - outputs[0])) * ManagedDataSet.getMaxFitness());
+			fitness = mds.getMaxFitness() - (Math.abs((desiredOutput - outputs[0])) * mds.getMaxFitness());
 			
 		}
 		return fitness;

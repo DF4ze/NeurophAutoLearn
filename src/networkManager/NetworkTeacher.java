@@ -101,14 +101,12 @@ public class NetworkTeacher implements LearningEventListener{
 					getAcceptedError() == null)
 				throw new NeurophException("ManagedDataSet information not correctly set!");
 			
-			// set
-			ManagedDataSet.setParameters(
+			// retrieve instance
+			setManagedDataSet( new ManagedDataSet(
 					getInputSize(),
 					getOutputSize(),
 					getMaxFitness(),
-					getAcceptedError());
-			// and retrieve instance
-			setManagedDataSet( ManagedDataSet.getInstance() );
+					getAcceptedError()) );
 		}
 		
 		// learn network if datas changed
@@ -161,15 +159,15 @@ public class NetworkTeacher implements LearningEventListener{
 	public void setManagedDataSet(ManagedDataSet mds) throws NeurophException {
 		this.mds = mds;
 		
-		if( ManagedDataSet.getMaxFitness() != null &&
-				ManagedDataSet.getInputNb() != null &&
-				ManagedDataSet.getOutputNb() != null &&
-				ManagedDataSet.getAcceptedError() != null ){
+		if( mds.getMaxFitness() != null &&
+				mds.getInputNb() != null &&
+						mds.getOutputNb() != null &&
+								mds.getAcceptedError() != null ){
 			
-			setMaxFitness(ManagedDataSet.getMaxFitness());
-			setInputSize(ManagedDataSet.getInputNb());
-			setOutputSize(ManagedDataSet.getOutputNb());
-			setAcceptedError(ManagedDataSet.getAcceptedError());
+			setMaxFitness(mds.getMaxFitness());
+			setInputSize(mds.getInputNb());
+			setOutputSize(mds.getOutputNb());
+			setAcceptedError(mds.getAcceptedError());
 			
 			setNetworkRunner(new NetworkRunner(getInputSize(), getOutputSize(), getManagedDataSet()));
 			BackPropagation bp = getNetworkRunner().getNeuralNet().getLearningRule();

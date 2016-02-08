@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package networkManager.evaluate;
 
 import dataManager.EvalDataSetRow;
@@ -12,11 +10,12 @@ import dataManager.ManagedDataSet;
  */
 public class CorridorDriverEvaluation implements IEvaluateFunction {
 
+	ManagedDataSet mds;
 	/**
 	 * 
 	 */
-	public CorridorDriverEvaluation() {
-		
+	public CorridorDriverEvaluation(ManagedDataSet mds) {
+		this.mds = mds;
 	}
 
 	/* (non-Javadoc)
@@ -32,7 +31,7 @@ public class CorridorDriverEvaluation implements IEvaluateFunction {
 		if( (inputs[0] >= 0 && inputs[0] <= 1) && (inputs[1] >= 0 && inputs[1] <= 1) ){
 			double dif = inputs[0] - inputs[1];
 			double reg = (outputs[0]-0.5)*2;
-			fitness = ManagedDataSet.getMaxFitness()-( Math.abs( dif+reg )*10 );
+			fitness = mds.getMaxFitness()-( Math.abs( dif+reg )*10 );
 			if( fitness < 0 )
 				fitness = 0.0;
 			

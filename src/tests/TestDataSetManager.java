@@ -13,8 +13,7 @@ public class TestDataSetManager {
 	}
 
 	public static void main(String[] args) {
-		ManagedDataSet.setParameters(3, 1, 10, 20);
-		ManagedDataSet dataSet = ManagedDataSet.getInstance();
+		ManagedDataSet dataSet = new ManagedDataSet(3, 1, 10, 20);
 		//FitDataSet dataSet = new FitDataSet( 3, 1, true);
 		dataSet.addRow(new FitDataSetRow( new double[]{0.5,0.6,0.7}, new double[]{0.4}, 10d));
 		dataSet.addRow(new FitDataSetRow( new double[]{0.4,0.5,0.6}, new double[]{0.3}, 7d));

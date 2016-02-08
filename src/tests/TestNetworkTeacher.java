@@ -28,11 +28,9 @@ public class TestNetworkTeacher {
 		int nbOutputs = 1;
 		double maxFitness = 10;
 		double maxError = 2;
-		//XorEvaluation evaluateFunction = new XorEvaluation();
-		CorridorDriverEvaluation evaluateFunction= new CorridorDriverEvaluation();
+		ManagedDataSet mds = new ManagedDataSet(nbInputs, nbOutputs, maxFitness, maxError);
+		CorridorDriverEvaluation evaluateFunction= new CorridorDriverEvaluation( mds );
 		
-		ManagedDataSet.setParameters(nbInputs, nbOutputs, maxFitness, maxError);
-		ManagedDataSet mds = ManagedDataSet.getInstance();
 		NetworkTeacher teacher = new NetworkTeacher(mds, evaluateFunction);
 
 		MultiLayerPerceptron nn = teacher.getNetworkRunner().getNeuralNet();

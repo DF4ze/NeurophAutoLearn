@@ -28,40 +28,40 @@ public class ManagedDataSet extends FitDataSet {
 	/**
 	 * FIFO for rows to reeval
 	 */
-	private static LinkedList<EvalDataSetRow> reevalItems = new LinkedList<>();
+	private LinkedList<EvalDataSetRow> reevalItems = new LinkedList<>();
 	/**
 	 * FIFO for new row to juge by fitness
 	 */
-	private static LinkedList<EvalDataSetRow> waitingLine = new LinkedList<>();
+	private LinkedList<EvalDataSetRow> waitingLine = new LinkedList<>();
 	/**
 	 * Singleton 
 	 */
-	private static ManagedDataSet me = null;
+	//private static ManagedDataSet me = null;
 
 
 	/**
 	 * Maximum of fitness this network can have
 	 */
-	private static Double maxFitness;
+	private Double maxFitness;
 	
 	/**
 	 * Percent less thant maxFitness that is authorized
 	 */
-	private static Double acceptedError;
+	private Double acceptedError;
 	
 	/**
 	 * Size of inputs vector
 	 */
-	private static Integer inputSize;
+	private Integer inputSize;
 	/**
 	 * Size of outputs vector
 	 */
-	private static Integer outputSize;
+	private Integer outputSize;
 	
 	/**
 	 * Thread that manage the sort of incoming rows
 	 */
-	private static Thread tSorter;
+	private Thread tSorter;
 	/**
 	 * For the hasChanged() function, remember the last count of entries
 	 */
@@ -76,13 +76,15 @@ public class ManagedDataSet extends FitDataSet {
 	 * @param maxFitness Maximum of fitness
 	 * @param acceptedError Percent less thant maxFitness is authorized
 	 */
-	private ManagedDataSet() throws NeurophException{
+	public ManagedDataSet(int inputSize, int outputSize, double maxFitness, double acceptedError) throws NeurophException{
 		super(inputSize, outputSize, true);
 		
-		if( inputSize == null ||
-				outputSize == null ||
-				maxFitness == null ||
-				acceptedError == null)
+		setParameters( inputSize, outputSize, maxFitness, acceptedError );
+		
+		if( this.inputSize == null ||
+				this.outputSize == null ||
+						this.maxFitness == null ||
+								this.acceptedError == null)
 			throw new NeurophException("One or more parameters aren't set");
 		
 		launchSorter();
@@ -103,20 +105,20 @@ public class ManagedDataSet extends FitDataSet {
 	 * @param maxFitness Maximum fitness that can be set
 	 * @param acceptedError Percent error of maxFitness that the DataSet will accept
 	 */
-	public static void setParameters( int inputSize, int outputSize, double maxFitness, double acceptedError ){
+	public void setParameters( int inputSize, int outputSize, double maxFitness, double acceptedError ){
 		setInputSize(inputSize);
 		setOutputSize(outputSize);
 		setMaxFitness(maxFitness);
 		setAcceptedError(acceptedError);
 	}
 	
-	public static ManagedDataSet getInstance() throws NeurophException{
-		if( me == null ){
-			me = new ManagedDataSet();
-		}
-		
-		return me;
-	}
+//	public static ManagedDataSet getInstance() throws NeurophException{
+//		if( me == null ){
+//			me = new ManagedDataSet();
+//		}
+//		
+//		return me;
+//	}
 
 	/**
 	 * Launch the deamon thread that sort incoming rows
@@ -151,7 +153,7 @@ public class ManagedDataSet extends FitDataSet {
 	}
 
 	protected void setReevalItems(LinkedList<EvalDataSetRow> reevalItems) {
-		ManagedDataSet.reevalItems = reevalItems;
+		this.reevalItems = reevalItems;
 		
 	}
 
@@ -259,10 +261,10 @@ public class ManagedDataSet extends FitDataSet {
 	 * @return true if given fitness is in range of accepted values
 	 */
 	public boolean isFitnessInAcceptedRange( double fitness ){
-		double delta = (ManagedDataSet.getAcceptedError() * ManagedDataSet.getMaxFitness())/100;
+		double delta = (getAcceptedError() * getMaxFitness())/100;
 		
 		boolean accepted = false;
-		if( fitness >= ( ManagedDataSet.getMaxFitness() - delta ) )
+		if( fitness >= ( getMaxFitness() - delta ) )
 			accepted = true;
 		
 		return accepted;
@@ -325,64 +327,64 @@ public class ManagedDataSet extends FitDataSet {
 	/**
 	 * @return the maxFitness
 	 */
-	public static Double getMaxFitness() {
+	public Double getMaxFitness() {
 		return maxFitness;
 	}
 
 	/**
 	 * @param maxFitness the maxFitness to set
 	 */
-	protected static void setMaxFitness(double maxFitness) {
-		ManagedDataSet.maxFitness = maxFitness;
+	protected void setMaxFitness(double maxFitness) {
+		this.maxFitness = maxFitness;
 	}
 
 	/**
 	 * @return the acceptedError
 	 */
-	public static Double getAcceptedError() {
+	public Double getAcceptedError() {
 		return acceptedError;
 	}
 
 	/**
 	 * @param acceptedError the acceptedError to set
 	 */
-	protected static void setAcceptedError(double acceptedError) {
-		ManagedDataSet.acceptedError = acceptedError;
+	protected void setAcceptedError(double acceptedError) {
+		this.acceptedError = acceptedError;
 	}
 
 	/**
 	 * @return the inputSize
 	 */
-	public static Integer getInputNb() {
+	public Integer getInputNb() {
 		return inputSize;
 	}
 
 	/**
 	 * @param inputSize the inputSize to set
 	 */
-	protected static void setInputSize(Integer inputSize) {
-		ManagedDataSet.inputSize = inputSize;
+	protected void setInputSize(Integer inputSize) {
+		this.inputSize = inputSize;
 	}
 
 	/**
 	 * @return the outputSize
 	 */
-	public static Integer getOutputNb() {
+	public Integer getOutputNb() {
 		return outputSize;
 	}
 
 	/**
 	 * @param outputSize the outputSize to set
 	 */
-	protected static void setOutputSize(Integer outputSize) {
-		ManagedDataSet.outputSize = outputSize;
+	protected void setOutputSize(Integer outputSize) {
+		this.outputSize = outputSize;
 	}
 
 	/**
 	 * @param acceptedError the acceptedError to set
 	 */
-	protected static void setAcceptedError(Double acceptedError) {
-		ManagedDataSet.acceptedError = acceptedError;
+	protected void setAcceptedError(Double acceptedError) {
+		this.acceptedError = acceptedError;
 	}
 
 	/**
@@ -396,7 +398,7 @@ public class ManagedDataSet extends FitDataSet {
 	 * @param waitingLine the waitingLine to set
 	 */
 	protected void setWaitingLine(LinkedList<EvalDataSetRow> waitingLine) {
-		ManagedDataSet.waitingLine = waitingLine;
+		this.waitingLine = waitingLine;
 	}
 	
 	public void setRows( List<FitDataSetRow> rows ){
