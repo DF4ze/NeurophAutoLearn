@@ -22,7 +22,7 @@ public class ReevaluateTeacherDeleguate implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println("Rééval Thread started");
+		//System.out.println("Rééval Thread started");
 			while( true ){
 				synchronized (mds.getReevalItems()) {
 					try {
@@ -33,27 +33,28 @@ public class ReevaluateTeacherDeleguate implements Runnable {
 				while( mds.getReevalItems().size() != 0 ){
 					//System.out.println("Rééval...");
 					EvalDataSetRow evalItem = mds.popReevalItem();
-					
-					//FitDataSet lastDatas = evalItem.getPrevEval();
-					double [] outputs = new double [evalItem.getDesiredOutput().length];
-					for( int i=0; i < evalItem.getDesiredOutput().length; i++ ){
-						outputs[i] = Math.random();
+					if( evalItem != null){
+						//FitDataSet lastDatas = evalItem.getPrevEval();
+						double [] outputs = new double [evalItem.getDesiredOutput().length];
+						for( int i=0; i < evalItem.getDesiredOutput().length; i++ ){
+							outputs[i] = Math.random();
+						}
+						
+						evalItem.setDesiredOutput(outputs);
+						
+						Double fitness = getEvalFunction().evaluate(evalItem);
+						
+						if( fitness == null )
+							continue;
+						
+						evalItem.setFitness(fitness);
+						
+						mds.addRow(evalItem);
+						
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {}
 					}
-					
-					evalItem.setDesiredOutput(outputs);
-					
-					Double fitness = getEvalFunction().evaluate(evalItem);
-					
-					if( fitness == null )
-						continue;
-					
-					evalItem.setFitness(fitness);
-					
-					mds.addRow(evalItem);
-					
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {}
 				}
 			
 		

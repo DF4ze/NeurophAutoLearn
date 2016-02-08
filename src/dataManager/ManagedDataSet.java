@@ -164,7 +164,8 @@ public class ManagedDataSet extends FitDataSet {
 	public EvalDataSetRow popReevalItem(){
 		EvalDataSetRow item = null;
 		synchronized (reevalItems) {
-			item = reevalItems.pop();
+			if( reevalItems.size() != 0 )
+				item = reevalItems.pop();
 			
 		}
 		return item;

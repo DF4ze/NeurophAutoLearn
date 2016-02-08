@@ -6,14 +6,12 @@ import networkManager.NetworkTeacher;
 import networkManager.evaluate.CorridorDriverEvaluation;
 
 import org.neuroph.core.Layer;
-import org.neuroph.core.data.DataSet;
 import org.neuroph.nnet.MultiLayerPerceptron;
+import org.neuroph.nnet.learning.MomentumBackpropagation;
 import org.neuroph.util.ConnectionFactory;
 import org.neuroph.util.NeuronFactory;
 import org.neuroph.util.NeuronProperties;
 import org.neuroph.util.TransferFunctionType;
-
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 import dataManager.EvalDataSetRow;
 import dataManager.ManagedDataSet;
@@ -38,6 +36,7 @@ public class TestNetworkTeacher {
 		NetworkTeacher teacher = new NetworkTeacher(mds, evaluateFunction);
 
 		MultiLayerPerceptron nn = teacher.getNetworkRunner().getNeuralNet();
+		MomentumBackpropagation rules = teacher.getNetworkRunner().getLearningRule();
 		
 		System.out.println("=====================================\n"+
 				"  ---=== Auto apprentissage ===---\n\n"+
@@ -45,21 +44,26 @@ public class TestNetworkTeacher {
 				"nb inputs :  "+nbInputs+"\n"+
 				"nb outputs : "+nbOutputs+"\n"+
 				"maxFitness : "+maxFitness+"\n"+
-				"maxError :   "+maxError+"\n"+
-				"nb Layer :   "+nn.getLayers().length);
+				"% maxError : "+maxError+"\n"+
+				"nb Layer :   "+nn.getLayers().length+"\n");
 		for( int i=0; i < nn.getLayers().length; i++ )
 			System.out.println("\tLayer N°"+i+" : "+nn.getLayers()[i].getNeuronsCount()+" neurons");
 		
+		System.out.println( "\n-----------------\nRules :\n"+
+				"Learning Rate : "+rules.getLearningRate()+"\n"+
+				"maxError :      "+rules.getMaxError()+"\n"+
+				"maxIteration :  "+rules.getMaxIterations()+"\n"+
+				"Momentum :      "+rules.getMomentum() );
 		System.out.println("\n"+
 				"=====================================\n\n"+
-				"- 'q' pour quitter\n"+
-				"- 'sn' pour enregistrer le NetWork\n"+
-				"- 'ln' pour charger le NetWork\n"+
-				"- 'sd' pour enregistrer le DataSet\n"+
-				"- 'ld' pour charger le DataSet\n"+
-				"- 'c' pour compter le DataSet\n"+
-				"- 'nn' pour montrer le NN\n"+
-				"- 'l' pour lister le DataSet\n");
+				"- 'q'  quitter\n"+
+				"- 'sn' enregistrer le NetWork\n"+
+				"- 'ln' charger le NetWork\n"+
+				"- 'sd' enregistrer le DataSet\n"+
+				"- 'ld' charger le DataSet\n"+
+				"- 'c'  compter le DataSet\n"+
+				"- 'nn' montrer le NN\n"+
+				"- 'l'  lister le DataSet\n");
 
 		
 		Scanner sc = new Scanner(System.in);

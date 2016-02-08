@@ -2,7 +2,7 @@ package networkManager.nnetwork;
 
 import org.neuroph.core.exceptions.NeurophException;
 import org.neuroph.nnet.MultiLayerPerceptron;
-import org.neuroph.nnet.learning.BackPropagation;
+import org.neuroph.nnet.learning.MomentumBackpropagation;
 
 import dataManager.EvalDataSetRow;
 import dataManager.ManagedDataSet;
@@ -13,7 +13,7 @@ public class NetworkRunner {
 	private Integer outputSize;
 	private ManagedDataSet mds;
 	private MultiLayerPerceptron neuralNet;
-	private BackPropagation learningRule;
+	private MomentumBackpropagation learningRule;
 	//private ArrayList<EvalDataSetRow> last2 = new ArrayList<>();
 	
 	/**
@@ -36,15 +36,20 @@ public class NetworkRunner {
         //create neural network
 		neuralNet = new MultiLayerPerceptron(inputSize, inputSize, outputSize);
         //get backpropagation learning rule from network
-		learningRule = neuralNet.getLearningRule();
+		//learningRule = neuralNet.getLearningRule();
 
-        learningRule.setLearningRate(0.5);
+		learningRule = new MomentumBackpropagation();
+        learningRule.setLearningRate(0.2);
         learningRule.setMaxError(0.01);
         learningRule.setMaxIterations(5000);
+        learningRule.setMomentum(0.7);
         
-        
+        neuralNet.setLearningRule(learningRule);
 		
 	}
+
+
+	
 
 
 	/**
@@ -121,7 +126,7 @@ public class NetworkRunner {
 
         //train neural network
         neuralNet.learn(mds);
-        System.out.println( "learned" );
+        //System.out.println( "learned" );
 
 	}
 	
@@ -165,6 +170,28 @@ public class NetworkRunner {
 	 */
 	public void setNeuralNet(MultiLayerPerceptron neuralNet) {
 		this.neuralNet = neuralNet;
+	}
+
+
+
+
+
+	/**
+	 * @return the learningRule
+	 */
+	public MomentumBackpropagation getLearningRule() {
+		return learningRule;
+	}
+
+
+
+
+
+	/**
+	 * @param learningRule the learningRule to set
+	 */
+	public void setLearningRule(MomentumBackpropagation learningRule) {
+		this.learningRule = learningRule;
 	}
 
 }
