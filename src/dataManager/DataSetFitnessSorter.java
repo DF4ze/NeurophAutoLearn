@@ -1,5 +1,7 @@
 package dataManager;
 
+import debug.debug;
+
 public class DataSetFitnessSorter implements Runnable {
 
 	private ManagedDataSet dsm;
@@ -10,7 +12,9 @@ public class DataSetFitnessSorter implements Runnable {
 
 	@Override
 	public void run() {
-		//System.out.println("Thread effectly running");
+		if( debug.isDebug() )
+			System.out.println("Thread Fitness sorter launched");
+		
 		synchronized (dsm.getWaitingLine()) {
 			while( true ){
 			

@@ -3,6 +3,7 @@
  */
 package dataManager;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +22,7 @@ import debug.debug;
  * @author Clement ORTIZ
  *
  */
-public class ManagedDataSet extends FitDataSet {
+public class ManagedDataSet extends FitDataSet implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -408,6 +409,13 @@ public class ManagedDataSet extends FitDataSet {
 			addRow(row);
 		}
 	}
+//	public void setRows( FitDataSet rows ){
+//		clear();
+//		
+//		for( FitDataSetRow row : (List<FitDataSetRow>)(rows.getRows()) ){
+//			addRow(row);
+//		}
+//	}
 	public void setRows( ManagedDataSet mds ){
 		setRows( mds.getFitRows() );
 	}
@@ -421,6 +429,29 @@ public class ManagedDataSet extends FitDataSet {
 	}
 	
 	public void loadFromFile( String fileName ){
-		setRows( (ManagedDataSet)DataSet.load(fileName));
+		DataSet ds = DataSet.load(fileName);
+		
+		if( ds instanceof ManagedDataSet )
+			setRows( (ManagedDataSet)ds);
+		
+		else if( ds instanceof FitDataSet ){
+			List<DataSetRow> lds = ((FitDataSet)ds).getRows();
+			for( DataSetRow dsr : lds )
+				addRow( (FitDataSetRow) dsr);
+		}
+		else if( ds instanceof DataSet ){
+			List<DataSetRow> lds = ds.getRows();
+			for( DataSetRow dsr : lds )
+				super.addRow( dsr );
+		}
+	}
+	
+	@Override
+	public void save( String path ){
+		DataSet ds = new DataSet(getInputSize(), getOutputSize());
+		for( DataSetRow row : getRows()){
+			ds.addRow( row );
+		}
+		ds.save(path);
 	}
 }

@@ -2,10 +2,8 @@ package tests;
 
 import java.util.Scanner;
 
-import networkManager.NetworkTeacher;
-import networkManager.evaluate.CorridorDriverEvaluation;
-
 import org.neuroph.core.Layer;
+import org.neuroph.core.NeuralNetwork;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.nnet.learning.MomentumBackpropagation;
 import org.neuroph.util.ConnectionFactory;
@@ -15,6 +13,8 @@ import org.neuroph.util.TransferFunctionType;
 
 import dataManager.EvalDataSetRow;
 import dataManager.ManagedDataSet;
+import networkManager.NetworkTeacher;
+import networkManager.evaluate.CorridorDriverEvaluation;
 
 public class TestNetworkTeacher {
 
@@ -43,9 +43,9 @@ public class TestNetworkTeacher {
 				"nb outputs : "+nbOutputs+"\n"+
 				"maxFitness : "+maxFitness+"\n"+
 				"% maxError : "+maxError+"\n"+
-				"nb Layer :   "+nn.getLayers().length+"\n");
-		for( int i=0; i < nn.getLayers().length; i++ )
-			System.out.println("\tLayer N°"+i+" : "+nn.getLayers()[i].getNeuronsCount()+" neurons");
+				"nb Layer :   "+nn.getLayers().size()+"\n");
+		for( int i=0; i < nn.getLayers().size(); i++ )
+			System.out.println("\tLayer N°"+i+" : "+nn.getLayers().get(i).getNeuronsCount()+" neurons");
 		
 		System.out.println( "\n-----------------\nRules :\n"+
 				"Learning Rate : "+rules.getLearningRate()+"\n"+
@@ -77,7 +77,7 @@ public class TestNetworkTeacher {
 					System.out.println("NN Saved ");
 					continue;
 				case "ln":
-					nn = (MultiLayerPerceptron) MultiLayerPerceptron.createFromFile("testedNN.nnet");
+					nn = (MultiLayerPerceptron) NeuralNetwork.createFromFile("CorridorDriver.nnet");
 					nn.learn(mds);
 					System.out.println("NN loaded ");
 					continue;
@@ -86,42 +86,47 @@ public class TestNetworkTeacher {
 					System.out.println("DataSet Saved ");
 					continue;
 				case "ld":
-					mds.loadFromFile("testedDataset.dst");
-					nn.learn(mds);
-					System.out.println("DataSet Loaded ");
+					try{
+						mds.loadFromFile("FullDataset.dst");
+						Thread.sleep(500);
+						nn.learn(mds);
+						System.out.println("DataSet Loaded ");
+					}catch( Exception e ){
+						e.printStackTrace();
+					}
 					continue;
 				case "c":
 					System.out.println("Count : "+mds.size());
 					continue;
 				case "nn":
-					for( int i=0; i < nn.getLayers().length; i++ )
-						System.out.println("\tLayer N°"+i+" : "+nn.getLayers()[i].getNeuronsCount()+" neurons");
+					for( int i=0; i < nn.getLayers().size(); i++ )
+						System.out.println("\tLayer N°"+i+" : "+nn.getLayers().get(i).getNeuronsCount()+" neurons");
 					continue;
 				case "l":
 					System.out.println( "list : \n"+mds.toString() );
 					continue;
 				case "+":
-					Layer layer = nn.getLayerAt(nn.getLayers().length -2);
+					Layer layer = nn.getLayerAt(nn.getLayers().size() -2);
 					int nbNeurons = layer.getNeuronsCount();
-					nn.removeLayerAt(nn.getLayers().length -2);
+					nn.removeLayerAt(nn.getLayers().size() -2);
 					layer = new Layer(nbNeurons+1);
 					for( int i=0; i < nbNeurons+1; i++ ){
 						layer.addNeuron(NeuronFactory.createNeuron(new NeuronProperties(TransferFunctionType.SIGMOID, true)));
 					}
-					nn.addLayer(nn.getLayers().length -2, layer);
-					ConnectionFactory.fullConnect(nn.getLayerAt(nn.getLayers().length -3), nn.getLayerAt(nn.getLayers().length -2));
-					ConnectionFactory.fullConnect(nn.getLayerAt(nn.getLayers().length -2), nn.getLayerAt(nn.getLayers().length -1));
+					nn.addLayer(nn.getLayers().size() -2, layer);
+					ConnectionFactory.fullConnect(nn.getLayerAt(nn.getLayers().size() -3), nn.getLayerAt(nn.getLayers().size() -2));
+					ConnectionFactory.fullConnect(nn.getLayerAt(nn.getLayers().size() -2), nn.getLayerAt(nn.getLayers().size() -1));
 					
 					nn.learn(mds);
 					
 					System.out.println( "Hidden Neuron added : "+layer.getNeuronsCount()+" neurons" );
-					for( int i=0; i < nn.getLayers().length; i++ )
-						System.out.println("\tLayer N°"+i+" : "+nn.getLayers()[i].getNeuronsCount()+" neurons");
+					for( int i=0; i < nn.getLayers().size(); i++ )
+						System.out.println("\tLayer N°"+i+" : "+nn.getLayers().get(i).getNeuronsCount()+" neurons");
 					continue;
 				case "++":
-					Layer lastLayer = nn.getLayerAt(nn.getLayers().length -2);
+					Layer lastLayer = nn.getLayerAt(nn.getLayers().size() -2);
 					int nbNeurLast = lastLayer.getNeuronsCount();
-					nn.removeLayerAt(nn.getLayers().length -2);
+					nn.removeLayerAt(nn.getLayers().size() -2);
 //					for( int i =0; i < lastLayer.getNeurons().length; i++ ){
 //						lastLayer.getNeurons()[i].removeAllOutputConnections();;
 //					}
@@ -129,22 +134,22 @@ public class TestNetworkTeacher {
 					for( int i=0; i< nbNeurLast; i++ ){
 						lastLayer.addNeuron(NeuronFactory.createNeuron(new NeuronProperties(TransferFunctionType.SIGMOID, true)));
 					}
-					nn.addLayer(nn.getLayers().length -2, lastLayer);
+					nn.addLayer(nn.getLayers().size() -2, lastLayer);
 					
 					Layer layer2 = new Layer(nbInputs);
 					for( int i=0; i < nbInputs; i++ ){
 						layer2.addNeuron(NeuronFactory.createNeuron(new NeuronProperties(TransferFunctionType.SIGMOID, true)));
 					}
-					nn.addLayer(nn.getLayers().length -1, layer2);
-					ConnectionFactory.fullConnect(nn.getLayerAt(nn.getLayers().length -4), nn.getLayerAt(nn.getLayers().length -3));
-					ConnectionFactory.fullConnect(nn.getLayerAt(nn.getLayers().length -3), nn.getLayerAt(nn.getLayers().length -2));
-					ConnectionFactory.fullConnect(nn.getLayerAt(nn.getLayers().length -2), nn.getLayerAt(nn.getLayers().length -1));
+					nn.addLayer(nn.getLayers().size() -1, layer2);
+					ConnectionFactory.fullConnect(nn.getLayerAt(nn.getLayers().size() -4), nn.getLayerAt(nn.getLayers().size() -3));
+					ConnectionFactory.fullConnect(nn.getLayerAt(nn.getLayers().size() -3), nn.getLayerAt(nn.getLayers().size() -2));
+					ConnectionFactory.fullConnect(nn.getLayerAt(nn.getLayers().size() -2), nn.getLayerAt(nn.getLayers().size() -1));
 					
 					nn.learn(mds);
 					
 					System.out.println( "Layer added with "+layer2.getNeuronsCount()+" neurons" );
-					for( int i=0; i < nn.getLayers().length; i++ )
-						System.out.println("\tLayer N°"+i+" : "+nn.getLayers()[i].getNeuronsCount()+" neurons");
+					for( int i=0; i < nn.getLayers().size(); i++ )
+						System.out.println("\tLayer N°"+i+" : "+nn.getLayers().get(i).getNeuronsCount()+" neurons");
 
 					continue;
 				}

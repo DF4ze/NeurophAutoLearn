@@ -117,7 +117,7 @@ public class NetworkTeacher implements LearningEventListener{
 //	                .createOptimalModel(getManagedDataSet());
 //
 //	        getNetworkRunner().setNeuralNet(neuralNet);
-			getNetworkRunner().learn();
+			getNetworkRunner().getNeuralNet().learn( getManagedDataSet() );
 		}
 		
 		// and get outputs
@@ -183,6 +183,8 @@ public class NetworkTeacher implements LearningEventListener{
 		BackPropagation bp = (BackPropagation)event.getSource();
         if (event.getEventType() == LearningEvent.Type.LEARNING_STOPPED)
             System.out.println(bp.getCurrentIteration() + ". iteration : "+ bp.getTotalNetworkError());
+//        else
+//        	System.out.println(bp.getCurrentIteration() + ". iteration : "+ bp.getTotalNetworkError());
         
 		//LearningEvent.Type.EPOCH_ENDED
 	}

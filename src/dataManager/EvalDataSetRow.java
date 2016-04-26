@@ -78,6 +78,7 @@ public class EvalDataSetRow extends FitDataSetRow {
 	 * 
 	 * @param fitness fitness of the ouput vector
 	 */
+	@Override
 	public void setFitness( double fitness ){
 		if( getFitness() != null )
 			getPrevEval().addRow(getInput(), getDesiredOutput(), getFitness());

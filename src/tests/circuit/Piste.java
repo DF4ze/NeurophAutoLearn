@@ -131,7 +131,7 @@ public class Piste {
 	class GeneratePiste extends TimerTask{
 
 		private Piste piste;
-		private boolean show = true;
+		private boolean show = false;
 		
 		public GeneratePiste( Piste piste ){
 			this.piste = piste;

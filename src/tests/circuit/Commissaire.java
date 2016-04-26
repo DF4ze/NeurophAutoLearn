@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.neuroph.core.data.DataSet;
-import org.neuroph.core.data.DataSetRow;
-import org.neuroph.util.data.norm.MaxMinNormalizer;
-import org.neuroph.util.data.norm.Normalizer;
-import org.neuroph.util.data.norm.RangeNormalizer;
+import networkManager.nnetwork.NetworkRunner;
+import dataManager.ManagedDataSet;
+import debug.debug;
 
 public class Commissaire {
 
 	private Piste piste = new Piste(140, 50, 5);
 	private ArrayList<Voiture> concurrents = new ArrayList<Voiture>();
 	private long vitesse = 500;
+	private long compteur = 0;
 	
 	public Commissaire() {
 
@@ -69,13 +68,23 @@ public class Commissaire {
 		if( piste != null ){
 			for( Voiture v : concurrents ){
 				v.setPosition( (int)(Math.round( piste.getMilieu())) );
+				
+				if( debug.isDebug() ){
+					ManagedDataSet mds = v.getDataSet();
+					NetworkRunner nwr = v.getNetWorkRunner();
+					
+					System.out.println( "Voiture : "+v.getNumero() );
+					System.out.println( "- nb données : "+mds.size() );
+					System.out.println( "- nb layouts : "+nwr.getNeuralNet().getLayersCount() );
+					
+				}
 			}
 		}
 	}
 	
 	public void demarrerCourse(){
 		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new RunTime(), 0, vitesse);
+		timer.scheduleAtFixedRate(new RunTime(), 5000, vitesse);
 		
 	}
 
@@ -104,11 +113,25 @@ public class Commissaire {
 			
 			ArrayList<Voiture> crash = new ArrayList<>();
 			for( Voiture v : concurrents ){
-				
+//				if( debug.isDebug() ){
+//					ManagedDataSet mds = v.getDataSet();
+//					NetworkRunner nwr = v.getNetWorkRunner();
+//					
+//					System.out.println( "Voiture : "+v.getNumero() );
+//					System.out.println( "- nb données : "+mds.size() );
+//					System.out.println( "- nb layouts : "+nwr.getNeuralNet().getLayersCount() );
+//					
+//				}
 					
 				myDouble d1 = new myDouble(new Double (v.getPosition() - piste.gauche ));
 				myDouble d2 = new myDouble(new Double (piste.droite - v.getPosition()));
+				
 				normalise( d1, d2 );
+				
+				if( d1.d < 0 ) d1.d = 0;
+				if( d2.d < 0 ) d2.d = 0;
+				if( d1.d > 1 ) d1.d = 1;
+				if( d2.d > 1 ) d2.d = 1;
 				
 				double espaceG = d1.d;
 				double espaceD = d2.d;
@@ -117,8 +140,9 @@ public class Commissaire {
 				if( dDeriv == null )
 					continue;
 				
-				dDeriv = (dDeriv*2) - 1; // calle la valeur entre -1  et 1
-				int derive = (int) (dDeriv*piste.getLargeurPiste());
+				dDeriv = dDeriv -0.5;
+				dDeriv = (dDeriv*2); // calle la valeur entre -1  et 1
+				int derive = (int) (dDeriv*(piste.getLargeurPiste()-(piste.getLargeurPiste()/5)));
 				
 				v.setPosition(v.getPosition()+derive);
 				
@@ -132,14 +156,16 @@ public class Commissaire {
 
 			for( Voiture voit : crash ){
 				nvlPortion = dessineVoitureCrash( voit, nvlPortion );
+				voit.saveDS();
 				concurrents.remove(voit);
 			}
-			
-			System.out.println( nvlPortion );
+			compteur ++;
+			System.out.println( compteur+" "+nvlPortion );
 			
 			if( concurrents.size() == 0 ){
 				this.cancel();
 				System.out.println( "!!!!! Game Over !!!!" );
+				System.exit(0);
 			}
 		}
 		
@@ -160,6 +186,11 @@ public class Commissaire {
 			return nvlPorVoit;
 		}
 		private String dessineVoitureCrash( Voiture v, String nvlPortion ){
+			
+			if( v.getPosition() < 0 )
+				v.setPosition(0);
+			if( v.getPosition() > nvlPortion.length()-1 )
+				v.setPosition(nvlPortion.length()-1);
 			
 			char[] str = nvlPortion.toCharArray();
 			str[ v.getPosition() ] = '@';

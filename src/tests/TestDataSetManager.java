@@ -26,7 +26,7 @@ public class TestDataSetManager {
 		dataSet.save();
 		System.out.println("\nDatas Saved");
 		
-		DataSet ds = FitDataSet.load("testDataSetFit.dst");
+		DataSet ds = DataSet.load("testDataSetFit.dst");
 		System.out.println("\nDatas Loaded : ");
 		System.out.println( ds.toCSV());
 		

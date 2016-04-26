@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import org.neuroph.core.data.DataSet;
 import org.neuroph.core.data.DataSetRow;
 import org.neuroph.core.exceptions.NeurophException;
@@ -95,7 +94,8 @@ public class FitDataSet extends DataSet {
 	}
 
 	
-    public void saveAsTxt(String filePath, String delimiter) {
+    @Override
+	public void saveAsTxt(String filePath, String delimiter) {
 
         if (filePath == null) throw new IllegalArgumentException("File path is null!");
 
@@ -252,6 +252,9 @@ public class FitDataSet extends DataSet {
     }
 
 
+//    public List<FitDataSetRow> getRows(){
+//    	
+//    }
 
 
 }

@@ -3,6 +3,7 @@ package networkManager;
 import networkManager.evaluate.IEvaluateFunction;
 import dataManager.EvalDataSetRow;
 import dataManager.ManagedDataSet;
+import debug.debug;
 
 public class ReevaluateTeacherDeleguate implements Runnable {
 
@@ -22,44 +23,43 @@ public class ReevaluateTeacherDeleguate implements Runnable {
 
 	@Override
 	public void run() {
-		//System.out.println("Rééval Thread started");
-			while( true ){
-				synchronized (mds.getReevalItems()) {
+		if( debug.isDebug() )
+			System.out.println("Thread Reevaluation launched");
+		
+		while( true ){
+			synchronized (mds.getReevalItems()) {
+				try {
+					mds.getReevalItems().wait(1000l);
+				} catch (InterruptedException e) {}
+			}
+			//System.out.println("Rééval Thread wake up");
+			while( mds.getReevalItems().size() != 0 ){
+				//System.out.println("Rééval...");
+				EvalDataSetRow evalItem = mds.popReevalItem();
+				if( evalItem != null){
+					//FitDataSet lastDatas = evalItem.getPrevEval();
+					double [] outputs = new double [evalItem.getDesiredOutput().length];
+					for( int i=0; i < evalItem.getDesiredOutput().length; i++ ){
+						outputs[i] = Math.random();
+					}
+					
+					evalItem.setDesiredOutput(outputs);
+					
+					Double fitness = getEvalFunction().evaluate(evalItem);
+					
+					if( fitness == null )
+						continue;
+					
+					evalItem.setFitness(fitness);
+					
+					mds.addRow(evalItem);
+					
 					try {
-						mds.getReevalItems().wait(1000l);
+						Thread.sleep(10);
 					} catch (InterruptedException e) {}
 				}
-				//System.out.println("Rééval Thread wake up");
-				while( mds.getReevalItems().size() != 0 ){
-					//System.out.println("Rééval...");
-					EvalDataSetRow evalItem = mds.popReevalItem();
-					if( evalItem != null){
-						//FitDataSet lastDatas = evalItem.getPrevEval();
-						double [] outputs = new double [evalItem.getDesiredOutput().length];
-						for( int i=0; i < evalItem.getDesiredOutput().length; i++ ){
-							outputs[i] = Math.random();
-						}
-						
-						evalItem.setDesiredOutput(outputs);
-						
-						Double fitness = getEvalFunction().evaluate(evalItem);
-						
-						if( fitness == null )
-							continue;
-						
-						evalItem.setFitness(fitness);
-						
-						mds.addRow(evalItem);
-						
-						try {
-							Thread.sleep(10);
-						} catch (InterruptedException e) {}
-					}
-				}
-			
-		
+			}
 		}
-
 	}
 
 

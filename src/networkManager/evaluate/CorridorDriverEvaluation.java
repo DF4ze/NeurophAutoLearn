@@ -35,7 +35,8 @@ public class CorridorDriverEvaluation implements IEvaluateFunction {
 			if( fitness < 0 )
 				fitness = 0.0;
 			
-		}		
+		}else
+			System.out.println( "Wrong Inputs...." );
 		
 		return fitness;
 	}

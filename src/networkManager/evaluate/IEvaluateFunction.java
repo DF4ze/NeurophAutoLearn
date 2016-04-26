@@ -17,6 +17,7 @@ public interface IEvaluateFunction {
 	 * @return
 	 */
 	public Double evaluate( EvalDataSetRow evalItem );
+	@Override
 	public String toString();
 	
 }
